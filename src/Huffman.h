@@ -1,11 +1,12 @@
 #ifndef HUFFMAN_H
 #define HUFFMAXN_H
 
-#include <unordered_map>
-#include <vector>
+#include <string>
 #include <queue>
+#include "Allocator.h"
 
 struct HuffmanTreeNode {
+	static Math::Allocator<HuffmanTreeNode>Alloc;
 	HuffmanTreeNode* child[2];
 	size_t Size;
 	unsigned char Val;
@@ -14,9 +15,9 @@ struct HuffmanTreeNode {
 	}
 	~HuffmanTreeNode() {
 		if(child[0]!=nullptr)
-			delete child[0];
+			Alloc.destroy(child[0]),Alloc.deallocate(child[0]);
 		if(child[1]!=nullptr)
-			delete child[1];
+			Alloc.destroy(child[1]),Alloc.deallocate(child[1]);
 	}
 	bool isleaf(){return child[0]==nullptr; }
 	bool operator<(const HuffmanTreeNode&other)const {
@@ -24,25 +25,11 @@ struct HuffmanTreeNode {
 	}
 };
 
-class Huffman {
-private:
-	HuffmanTreeNode*rt;
-	unsigned int sum[256];//¼ÇÂ¼×Ö·û³öÏÖÆµÂÊ
-	int LastLength;//³¤¶È
-
-	typedef std::pair<unsigned int,unsigned int> bitval;
-
-	void makeroot(HuffmanTreeNode*treenode,unsigned int dep,unsigned int Val,
-		std::unordered_map<unsigned char,bitval>&);
-	void treebuild();
-	std::string treecode();//´æ´¢¹þ·òÂüÊ÷
-	int build(const std::string&);//¹þ·òÂüÊ÷±àÂë¹¹½¨
-public:
-	Huffman() :rt(nullptr) {
-	}
-
-	std::string encode(const std::string&);//±àÂë
+namespace Huffman {
+	typedef std::pair<unsigned char, unsigned int> bitval;
+	std::string encode(const std::string&);
 	std::string decode(const std::string&);
-};
+}
+
 
 #endif 
